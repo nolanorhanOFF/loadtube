@@ -116,7 +116,7 @@
         <h1>Téléchargez vos vidéos YouTube</h1>
         <p>Entrez l'URL de la vidéo YouTube et choisissez le format pour le téléchargement.</p>
         
-        <form action="your-download-script.php" method="POST">
+        <form id="download-form">
             <label for="video-url">URL de la vidéo YouTube :</label><br>
             <input type="text" id="video-url" name="video-url" placeholder="https://www.youtube.com/watch?v=..." required><br><br>
             
@@ -129,6 +129,8 @@
             <button type="submit">Télécharger</button>
             <button type="reset" class="reset-btn">Réinitialiser</button>
         </form>
+        
+        <div id="download-link"></div>
     </div>
     
     <script>
@@ -143,6 +145,21 @@
             }
         }
         createCircles();
+
+        document.getElementById('download-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            let videoUrl = document.getElementById('video-url').value;
+            let format = document.getElementById('quality').value;
+            let response = await fetch(`https://backend-youtube-downloader.example.com/download?url=${encodeURIComponent(videoUrl)}&format=${format}`);
+            let data = await response.json();
+            
+            if (data.success) {
+                document.getElementById('download-link').innerHTML = `<a href="${data.downloadUrl}" download>Cliquez ici pour télécharger</a>`;
+            } else {
+                document.getElementById('download-link').innerHTML = `<p style="color: red;">Erreur : ${data.error}</p>`;
+            }
+        });
     </script>
 </body>
 </html>
